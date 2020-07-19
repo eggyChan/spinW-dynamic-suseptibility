@@ -1,2 +1,2 @@
-# spinW-local-suseptibility
-spinW local suseptibility Chi''(E) calculation in MATLAB
+# spinW-dynamic-suseptibility
+spinW dynamic suseptibility Chi''(E) calculation in MATLAB
