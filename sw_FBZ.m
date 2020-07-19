@@ -3,8 +3,48 @@
 %Poms Johannes
 %Based on QHULL DEMO
 %http://www.mathworks.com/products/demos/shipping/matlab/qhulldemo.html
+%Modified by Lebing Chen
+%
+%
+%
+% calculates the lattice first Brillouin zone given any spinW object 
+% 
+% ### Syntax
+% 
+% `fbz = sw_FBZ(obj,plt)`
+% 
+% ### Description
+% 
+% `fbz = sw_FBZ(obj,plt)` takes a spinW object with lattice parameters and 
+% space group and converts it into a point group which can form a convex 
+% hull representing the first Brillouin zone.
+%
+% ### Examples
+% 
+% test1 = spinw
+% test1.genlattice('lat_const',[5 5 5],'angled',[90 90 90],'spgr',89)
+% fbz = sw_FBZ(test1, true)
+%
+% ### Input Arguments
+% 
+% `obj`
+% : spinW object with crystal structure and space group
+% 
+% `plt`
+% : true or false, plot the FBZ or not, default is false
+% 
 
-function fbz = sw_FBZ(obj,plt)
+function fbz = sw_FBZ(obj,varargin)
+
+
+inpForm.fname  = {'plt' 'RtoP'};
+inpForm.defval = {false false};
+inpForm.size   = {1 1 };
+inpForm.soft   = {false false};
+
+param = sw_readparam(inpForm,varargin{:});
+plt = param.plt;
+R2P = param.RtoP;
 
 
 
@@ -35,12 +75,18 @@ elseif sgroup(1) == 'A' || sgroup(1) == 'C'
     T3 =[0 c*cos(alpha) c*sin(alpha)];
 elseif sgroup(1) == 'R'
     if alpha == pi/2
-        T1 =[-a/2 a/2/sqrt(3) c/3];
-        T2 =[a/2 a/2/sqrt(3) c/3];
-        T3 =[0 -a/sqrt(3) c/3];
-        %T1 =[a/2*sqrt(3) -a/2 c/3];
-        %T2 =[-a/2*sqrt(3) -a/2 c/3];
-        %T3 =[0 a c/3];
+        if R2P == false
+            T1 =[-a/2 a/2/sqrt(3) c/3];
+            T2 =[a/2 a/2/sqrt(3) c/3];
+            T3 =[0 -a/sqrt(3) c/3];
+            %T1 =[a/2*sqrt(3) -a/2 c/3];
+            %T2 =[-a/2*sqrt(3) -a/2 c/3];
+            %T3 =[0 a c/3];
+        else
+            T1 = [a 0 0];
+            T2 = [b*cos(gamma) b*sin(gamma) 0];
+            T3 = [c*cos(beta) c/sin(gamma)*(cos(alpha)-cos(beta)*cos(gamma)) c/sin(gamma)*sqrt(sin(gamma)^2-cos(alpha)^2-cos(beta)^2+2*cos(alpha)*cos(beta)*cos(gamma))/3];
+        end
     end
 else
     T1 = [a 0 0];
@@ -67,7 +113,8 @@ for i=-2:2;
 end
 
 
-cla reset; hold on
+%cla reset; 
+hold on;
 
 % Compute Voronoi diagram.
 [c,v] = voronoin(X);

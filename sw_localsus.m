@@ -1,8 +1,21 @@
 %Calculate \chi''(E) = (\chi_{xx}''(E) + \chi_{yy}''(E) + \chi_{zz}''(E))/3
-function localsus = sw_localsus(obj,n,E,nE)
+function localsus = sw_localsus(obj,varargin)
 
 
-fbzhull = sw_FBZ(obj,false);
+inpForm.fname  = {'nQ' 'E' 'nE','RtoP'};
+inpForm.defval = {20 100 100 false};
+inpForm.size   = {1 1 1 1};
+inpForm.soft   = {false  false false false};
+
+param = sw_readparam(inpForm,varargin{:});
+
+n = param.nQ;
+E = param.E;
+nE = param.nE;
+R2P = param.RtoP;
+
+
+fbzhull = sw_FBZ(obj,'plt',false,'RtoP',R2P);
 %Hmax = max(abs(fbzhull(:,1)));
 %Kmax = max(abs(fbzhull(:,2)));
 %Lmax = max(abs(fbzhull(:,3)));
@@ -15,7 +28,7 @@ rl = zeros(2*n+1,2*n+1,2*n);
 Intensity = zeros(nE,1);
 localsus = zeros(nE,2);
 pts = 0;
-wb=waitbar(0,'Calculating local suseptibility...');
+wb=waitbar(0,'Calculating dynamic suseptibility...');
 for i = -n:n
     H = Hmax*i/n;
     for j = -n:n
@@ -31,7 +44,7 @@ for i = -n:n
             Intensity = Intensity+sum(SinFBZ,2);
             pts = pts+sum(FBZHKLA);
         end
-        waitbar((i+n+(j+n)/(2*n+1))/(2*n+1),wb,'Calculating local suseptibility...');
+        waitbar((i+n+(j+n)/(2*n+1))/(2*n+1),wb,'Calculating dynamic suseptibility...');
     end
 end
 waitbar(1,wb,'Calculation finished!');

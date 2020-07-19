@@ -1,4 +1,6 @@
 function in = inhull(testpts,xyz,tess,tol)
+%Function made by John D'Errico
+%https://www.mathworks.com/matlabcentral/fileexchange/10226-inhull
 % inhull: tests if a set of points are inside a convex hull
 % usage: in = inhull(testpts,xyz)
 % usage: in = inhull(testpts,xyz,tess)
